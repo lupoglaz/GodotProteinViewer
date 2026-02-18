@@ -1,3 +1,8 @@
 [gd_scene format=3 uid="uid://nc7mnkajw3g4"]
 
+[ext_resource type="cPDBData" uid="uid://cul03m1wdey1t" path="res://1bzv.pdb" id="1_ig7tw"]
+
 [node name="Node3D" type="Node3D" unique_id=1269724982]
+
+[node name="cPDBMeshSimple" type="cPDBMeshSimple" parent="." unique_id=214478009]
+pdb_data = ExtResource("1_ig7tw")

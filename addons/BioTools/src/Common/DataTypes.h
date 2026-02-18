@@ -49,5 +49,9 @@ namespace godot{
             T* get_pointer(unsigned long element_id){
                 return mem + element_id;
             };
+            const T& get_element(unsigned long element_id){
+                return mem[element_id];
+            }
+            unsigned long get_length(){return num_elements;}
     };
 }

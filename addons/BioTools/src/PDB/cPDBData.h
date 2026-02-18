@@ -34,9 +34,8 @@ struct PDBAtom {
 
 class cPDBData : public Resource {
 	GDCLASS(cPDBData, Resource)
-	unsigned long num_atoms = 0;
-	MemArena<PDBAtom, 32> atoms;
 	public:
+		MemArena<PDBAtom, 32> atoms;
 		cPDBData(){};
 		~cPDBData(){};
 		void load(const String &path);

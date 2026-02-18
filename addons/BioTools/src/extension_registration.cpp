@@ -21,7 +21,8 @@ void register_gameplay_types(godot::ModuleInitializationLevel p_level) {
 	}
 
     godot::ClassDB::register_class<godot::cPDBData>();
-
+    godot::ClassDB::register_class<godot::cPDBMeshSimple>();
+    
     godot::ClassDB::register_class<godot::cPDBFileLoader>();
 	pdb_loader.instantiate();
 	godot::ResourceLoader::get_singleton()->add_resource_format_loader(pdb_loader);
