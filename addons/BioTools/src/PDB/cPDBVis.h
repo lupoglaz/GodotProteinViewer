@@ -20,7 +20,6 @@ namespace godot{
     class cPDBMeshSimple : public Node3D{
         GDCLASS(cPDBMeshSimple, Node3D)
 
-        // Mesh *line = NULL;
         MultiMeshInstance3D *lines = NULL;
         MultiMeshInstance3D *atoms = NULL;
 

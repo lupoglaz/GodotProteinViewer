@@ -10,9 +10,71 @@ namespace godot{
                 dst[i] = '\0';
         }
     }
+    void cPDBData::add_atom(PDBAtom *atom){
+        PDBAtom *prev_atom = NULL;
+        uint num_atoms = atoms.get_length();
+        if(num_atoms > 1){
+            prev_atom = atoms.get_pointer(num_atoms - 1);
+            if (prev_atom->res_seq != atom->res_seq){
+                //new residue
+                atom->residue_indices.parent = num_atoms + 1;
+                //assigning atoms from previous residue next residue index
+                for(uint i=num_atoms; atoms.get_pointer(i)->residue_indices.parent == i; i--){
+                    atoms.get_pointer(i)->residue_indices.next = num_atoms + 1;
+                }
+            }else{
+                atom->residue_indices.parent = prev_atom->residue_indices.parent;
+            }
+            if (prev_atom->chain_id != atom->chain_id){
+                //new chain
+                atom->chain_indices.parent = num_atoms + 1;
+                //assigning atoms from previous chain next residue index
+                for(uint i=num_atoms; atoms.get_pointer(i)->chain_indices.parent == i; i--){
+                    atoms.get_pointer(i)->chain_indices.next = num_atoms + 1;
+                }
+            }else{
+                atom->chain_indices.parent = prev_atom->chain_indices.parent;
+            }
+            if (prev_atom->model_num != atom->model_num){
+                //new model
+                atom->model_indices.parent = num_atoms + 1;
+                //assigning atoms from previous model next residue index
+                for(uint i=num_atoms; atoms.get_pointer(i)->model_indices.parent == i; i--){
+                    atoms.get_pointer(i)->model_indices.next = num_atoms + 1;
+                }
+            }else{
+                atom->model_indices.parent = prev_atom->model_indices.parent;
+            }
+        }else{
+            atom->residue_indices.parent = 1;
+            atom->residue_indices.next = 0;
+            atom->chain_indices.parent = 1;
+            atom->chain_indices.next = 0;
+            atom->model_indices.parent = 1;
+            atom->model_indices.next = 0;
+
+        }
+        
+        atoms.add_element(atom);
+    }
+
     void cPDBData::load(const String &path){
         Ref<FileAccess> data = FileAccess::open(path, FileAccess::READ);
-        int _record_num = 0;
+        int _record_num = 1;
+        PDBAtom null_atom = {
+            0,//model_num
+            false,//is_heterogen
+            0,//serial
+            {'\0','\0','\0','\0','\0'},//name[5]
+            0,//res_seq
+            {'\0','\0','\0','\0'},//res_name
+            {'\0'},//chain_id
+            {' '},//i_code
+            {0.0, 0.0, 0.0},//position[3]
+            {'\0','\0','\0'}//symbol[3]
+        };
+        atoms.add_element(null_atom);
+
         for(String line = data->get_line(); !data->eof_reached(); line = data->get_line()){
             if(line.length() >= 6){
                 String record_name = line.substr(0, 6);
@@ -68,7 +130,7 @@ namespace godot{
                     _my_convert_string(res_name, atom.res_name, 4);
                     _my_convert_string(atom_symbol, atom.symbol, 3);
                     atom.chain_id = chain_name[0];
-                    atoms.add_element(atom);
+                    add_atom(&atom);
 
                 }else if(record_name.casecmp_to("CONECT")==0){
                     String atom_serial_num = line.substr(6, 5).strip_edges();

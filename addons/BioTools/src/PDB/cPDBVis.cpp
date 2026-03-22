@@ -23,7 +23,7 @@ namespace godot{
 			pdb_data = Ref<cPDBData>(NULL);
 			return;
 		}
-		pdb_data = _data;						
+		pdb_data = _data;
 		PDBAtom *prev_atom = NULL;
 		PackedVector3Array r0, r1;
 		for(unsigned long i=0; i<pdb_data->atoms.get_length(); i++){

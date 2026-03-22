@@ -18,6 +18,11 @@
 
 namespace godot{
 
+struct IntrusiveIndex{
+	uint parent;
+	uint next;
+};
+
 struct PDBAtom {
 	// -1 indicates heterogen_model, otherwise index of model
 	int model_num;
@@ -30,6 +35,8 @@ struct PDBAtom {
 	char i_code;
 	float position[3];    // Orthogonal coordinates in Angstroms
 	char symbol[3] = "";
+
+	IntrusiveIndex residue_indices, chain_indices, model_indices;
 };
 
 class cPDBData : public Resource {
@@ -39,6 +46,7 @@ class cPDBData : public Resource {
 		cPDBData(){};
 		~cPDBData(){};
 		void load(const String &path);
+		void add_atom(PDBAtom *atom);
 	protected:
 		static void _bind_methods();
 };
